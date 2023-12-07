@@ -1,0 +1,13 @@
+roles/artifactregistry.admin
+roles/cloudsql.admin
+roles/compute.networkAdmin
+roles/iam.serviceAccountAdmin
+roles/iam.serviceAccountUser
+roles/redis.admin
+roles/resourcemanager.projectIamAdmin
+roles/run.admin
+roles/servicenetworking.serviceAgent
+roles/serviceusage.serviceUsageAdmin
+roles/serviceusage.serviceUsageViewer
+roles/vpcaccess.admin
+roles/config.agent
