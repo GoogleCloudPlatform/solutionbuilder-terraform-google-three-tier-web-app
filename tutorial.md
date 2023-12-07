@@ -14,6 +14,11 @@ The solution should be edited and deployed by one user at a time to avoid confli
 
 ## Know your solution
 
+NOTE: Open the directory where the repository is cloned as a workspace in the editor:
+* Go to the `File` menu.
+* Select `Open Workspace`.
+* Choose the directory where the repository has been cloned.
+
 Here are the details of the Three-tier web app Jump Start Solution chosen by you.
 
 Solution Guide: [here](https://cloud.google.com/architecture/application-development/three-tier-web-app)
@@ -32,12 +37,6 @@ Both these services are built as container images and deployed using cloud run. 
 As an example, you can edit the `createHandler` function in <walkthrough-editor-select-line filePath="./src/middleware/main.go" startLine="170" endLine="171" startCharacterOffset="0" endCharacterOffset="0">./src/middleware/main.go</walkthrough-editor-select-line> to add a prefix string to every TODO item by replacing `t.Title = r.FormValue("title")` with `t.Title = "Prefix " + r.FormValue("title")`.
 
 NOTE: The changes in infrastructure may lead to reduction or increase in the incurred cost. For example, storing the container images for the services incurs [storage cost](https://cloud.google.com/container-registry/pricing).
-
-Please note: to open your recently used workspace:
-* Go to the `File` menu.
-* Select `Open Recent Workspace`.
-* Choose the desired workspace.
-
 
 ---
 **Automated deployment**
