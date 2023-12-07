@@ -42,7 +42,7 @@ Please note: to open your recently used workspace:
 ---
 **Automated deployment**
 
-Execute the deloy.sh script if you want an automated deployment to happen without following the full tutorial.
+Execute the <walkthrough-editor-open-file filePath="./deploy.sh">deploy.sh</walkthrough-editor-open-file> script if you want an automated deployment to happen without following the full tutorial.
 This step is optional and you can continue with the full tutorial if you want to understand the individual steps involved in the script.
 
 ```bash
