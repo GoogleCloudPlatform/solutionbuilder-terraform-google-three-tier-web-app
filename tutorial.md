@@ -8,9 +8,9 @@
 
 # Customize Three-tier web app Solution
 
-This tutorial provides the steps for you to build your own proof of concept solution based on the chosen Jump Start Solution (JSS) and deploy it. You can customize the chosen Jump Start Solutions (JSS) deployments by creating your own copy of the source code. You can modify the infrastructure and application code as needed and redeploy the solutions with the changes.
+This tutorial provides the steps for you to build your own proof of concept solution based on the deployed [Three-tier web app](https://console.cloud.google.com/products/solutions/details/three-tier-web-app) Jump Start Solution (JSS) and deploy it. You can customize the Jump Start Solution (JSS) deployment by creating your own copy of the source code. You can modify the infrastructure and application code as needed and redeploy the solution with the changes.
 
-Each solution should be edited and deployed by one user at a time to avoid conflicts.
+The solution should be edited and deployed by one user at a time to avoid conflicts. Multiple users editing and updating the same deployment in the same GCP project can lead to conflicts.
 
 ## Know your solution
 
@@ -19,7 +19,7 @@ Here are the details of the Three-tier web app Jump Start Solution chosen by you
 Solution Guide: [here](https://cloud.google.com/architecture/application-development/three-tier-web-app)
 
 The code for the solution is avaiable at the following location
-* Infrastructure code is present as part of `./main.tf`
+* Infrastructure code is present as part of <walkthrough-editor-open-file filePath="./main.tf">main.tf</walkthrough-editor-open-file>
 * Application code directory is located under `./src`
 
 
@@ -29,7 +29,7 @@ The application source code for the frontend service is present under `src/front
 
 Both these services are built as container images and deployed using cloud run. The terraform code is present in the `*.tf` files in the current directory.
 
-As an example, you can edit the `createHandler` function in `./src/middleware/main.go` to add a prefix string to every TODO item by replacing `t.Title = r.FormValue("title")` with `t.Title = "Prefix " + r.FormValue("title")`.
+As an example, you can edit the `createHandler` function in <walkthrough-editor-select-line filePath="./src/middleware/main.go" startLine="170" endLine="171" startCharacterOffset="0" endCharacterOffset="0">./src/middleware/main.go</walkthrough-editor-select-line> to add a prefix string to every TODO item by replacing `t.Title = r.FormValue("title")` with `t.Title = "Prefix " + r.FormValue("title")`.
 
 NOTE: The changes in infrastructure may lead to reduction or increase in the incurred cost. For example, storing the container images for the services incurs [storage cost](https://cloud.google.com/container-registry/pricing).
 
@@ -46,7 +46,6 @@ Execute the deloy.sh script if you want an automated deployment to happen withou
 This step is optional and you can continue with the full tutorial if you want to understand the individual steps involved in the script.
 
 ```bash
-chmod +x deploy.sh
 ./deploy.sh
 ```
 
@@ -133,7 +132,7 @@ gcloud builds submit --config=./cloudbuild.yaml --substitutions=_IMAGE_TAG="<var
 cd -
 ```
 
-Modify the `api_image` and `fe_image` value in `main.tf` with the updated image tag.
+Modify the `api_image` and `fe_image` value in <walkthrough-editor-select-line filePath="./main.tf" startLine="20" endLine="24" startCharacterOffset="0" endCharacterOffset="0">main.tf</walkthrough-editor-select-line> with the updated image tag.
 ```
 locals {
   api_image = "gcr.io/<var>PROJECT_ID</var>/three-tier-app-be:<var>IMAGE_TAG</var>"
@@ -144,7 +143,7 @@ locals {
 ---
 **Create Terraform input file**
 
-Create `input.tfvars` file.
+Create an `input.tfvars` file in the current directory.
 
 Find the sample content below and modify it by providing the respective details.
 ```
