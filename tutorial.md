@@ -42,7 +42,7 @@ We also strongly recommend that you familiarize yourself with the three-tier web
 
 ## Edit the solution
 
-For example, edit the createHandler function in <walkthrough-editor-select-line filePath="./src/middleware/main.go" startLine="170" endLine="171" startCharacterOffset="0" endCharacterOffset="0">./src/middleware/main.go</walkthrough-editor-select-line> to add a prefix string to every TODO. To add the prefix, replace `t.Title = r.FormValue("title") with t.Title = "Prefix " + r.FormValue("title")`.
+For example, edit the `createHandler` function in <walkthrough-editor-select-line filePath="./src/middleware/main.go" startLine="170" endLine="171" startCharacterOffset="0" endCharacterOffset="0">./src/middleware/main.go</walkthrough-editor-select-line> to add a prefix string to every TODO. To add the prefix, replace `t.Title = r.FormValue("title")` with `t.Title = "Prefix " + r.FormValue("title")`.
 
 Note: A change in the infrastructure code might cause a reduction or increase in the incurred cost. For example, storing the container images for the services incurs [storage cost](https://cloud.google.com/container-registry/pricing).
 
