@@ -9,7 +9,7 @@
 
 Learn how to build and deploy your own proof of concept based on the deployed [Three-tier web app](https://console.cloud.google.com/products/solutions/details/three-tier-web-app) Jump Start Solution. You can customize the Jump Start Solution deployment by creating a copy of the source code. You can modify the infrastructure and application code as needed and redeploy the solution with the changes.
 
-To avoid conflicts, only one user should modify and deploy a solution in a single GCP project.
+To avoid conflicts, only one user should modify and deploy a solution in a single Google Cloud project.
 
 ## Open cloned repository as workspace
 
@@ -18,32 +18,33 @@ Open the directory where the repository is cloned as a workspace in the editor, 
 ---
 **Legacy Cloud Shell Editor**
 
-* Go to the `File` menu.
-* Select `Open Workspace`.
-* Choose the directory where the repository has been cloned. This directory is the current directory in the cloud shell terminal.
+1. Go to the `File` menu.
+2. Select `Open Workspace`.
+3. Choose the directory where the repository has been cloned. This directory is the current directory in the cloud shell terminal.
 
 **New Cloud Shell Editor**
 
-* Go the hamburger icon located in the top left corner of the editor.
-* Go to the `File` Menu.
-* Select `Open Folder`.
-* Choose the directory where the repository has been cloned. This directory is the current directory in the cloud shell terminal.
+1. Go the hamburger icon located in the top left corner of the editor.
+2. Go to the `File` Menu.
+3. Select `Open Folder`.
+4. Choose the directory where the repository has been cloned. This directory is the current directory in the cloud shell terminal.
 
-## Details of your chosen three-tier web app Jump Start Solution
+## Before you begin
 
-* [Solution guide](https://cloud.google.com/architecture/application-development/three-tier-web-app)
+Before editing the solution, you should be aware of the following information:
+
 * Application code for the frontend service is available under `src/frontend`.
 * Application code for the middleware service is available under `src/middleware`.
 * Terraform / infrastructure code is available in the `*.tf` files.
 
 Both the frontend service and the middleware service are built as container images and deployed using Cloud Run.
-
+We also strongly recommend that you familiarize yourself with the three-tier web app solution by reading the [solution guide](https://cloud.google.com/architecture/application-development/three-tier-web-app).
 
 ## Edit the solution
 
-Edit the `createHandler` function in <walkthrough-editor-select-line filePath="./src/middleware/main.go" startLine="170" endLine="171" startCharacterOffset="0" endCharacterOffset="0">./src/middleware/main.go</walkthrough-editor-select-line> to add a prefix string to every TODO item by replacing `t.Title = r.FormValue("title")` with `t.Title = "Prefix " + r.FormValue("title")`.
+For example, edit the `createHandler` function in <walkthrough-editor-select-line filePath="./src/middleware/main.go" startLine="170" endLine="171" startCharacterOffset="0" endCharacterOffset="0">./src/middleware/main.go</walkthrough-editor-select-line> to add a prefix string to every TODO. To add the prefix, replace `t.Title = r.FormValue("title")` with `t.Title = "Prefix " + r.FormValue("title")`.
 
-NOTE: A change in the infrastructure code might cause a reduction or increase in the incurred cost. For example, storing the container images for the services incurs [storage cost](https://cloud.google.com/container-registry/pricing).
+Note: A change in the infrastructure code might cause a reduction or increase in the incurred cost. For example, storing the container images for the services incurs [storage cost](https://cloud.google.com/container-registry/pricing).
 
 ---
 **Create an automated deployment**
@@ -54,7 +55,7 @@ Optional: If you want to learn individual steps involved in the script, you can 
 ./deploy_solution.sh
 ```
 
-## Gather information to initialize the gcloud command
+## Gather information to initialize the deployment environment
 
 ---
 **Project ID**
