@@ -154,11 +154,23 @@ locals {
 ---
 **Create a terraform input file**
 
-Create an `input.tfvars` file in the current directory with the following contents:
+Get the existing region being used for terraform resources.
+
+```bash
+echo $(gcloud infra-manager deployments describe <var>DEPLOYMENT_NAME</var> --location <var>REGION</var> --format json) | jq -r '.terraformBlueprint.inputValues.region.inputValue'
+```
+
+Get the existing zone being used for terraform resources.
+
+```bash
+echo $(gcloud infra-manager deployments describe <var>DEPLOYMENT_NAME</var> --location <var>REGION</var> --format json) | jq -r '.terraformBlueprint.inputValues.zone.inputValue'
+```
+
+Create an `input.tfvars` file in the current directory with the following contents. Update the region and zone fetched above in the `TF_REGION` and `TF_ZONE` variable:
 
 ```
-region="us-central1"
-zone="us-central1-a"
+region="<var>TF_REGION</var>"
+zone="<var>TF_ZONE</var>"
 project_id = "<var>PROJECT_ID</var>"
 deployment_name = "<var>DEPLOYMENT_NAME</var>"
 labels = {
