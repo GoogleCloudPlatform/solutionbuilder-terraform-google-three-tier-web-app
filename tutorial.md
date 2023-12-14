@@ -154,11 +154,23 @@ locals {
 ---
 **Create a terraform input file**
 
-Create an `input.tfvars` file in the current directory with the following contents:
+Get the existing region being used for terraform resources.
+
+```bash
+echo $(gcloud infra-manager deployments describe <var>DEPLOYMENT_NAME</var> --location <var>REGION</var> --format json) | jq -r '.terraformBlueprint.inputValues.region.inputValue'
+```
+
+Get the existing zone being used for terraform resources.
+
+```bash
+echo $(gcloud infra-manager deployments describe <var>DEPLOYMENT_NAME</var> --location <var>REGION</var> --format json) | jq -r '.terraformBlueprint.inputValues.zone.inputValue'
+```
+
+Create an `input.tfvars` file in the current directory with the following contents. Update the region and zone fetched above in the `TF_REGION` and `TF_ZONE` variable:
 
 ```
-region="us-central1"
-zone="us-central1-a"
+region="<var>TF_REGION</var>"
+zone="<var>TF_ZONE</var>"
 project_id = "<var>PROJECT_ID</var>"
 deployment_name = "<var>DEPLOYMENT_NAME</var>"
 labels = {
@@ -225,4 +237,4 @@ Optional: Use one of the below options in case you want to delete the deployed s
 * Go to [Solution deployments page](https://console.cloud.google.com/products/solutions/deployments?pageState=(%22deployments%22:(%22f%22:%22%255B%257B_22k_22_3A_22Labels_22_2C_22t_22_3A13_2C_22v_22_3A_22_5C_22modification-reason%2520_3A%2520make-it-mine_5C_22_22_2C_22s_22_3Atrue_2C_22i_22_3A_22deployment.labels_22%257D%255D%22))).
 * Click on the link under "Deployment name". It will take you to the deployment details page for the solution.
 * Click on the "DELETE" button located at the top right corner of the page.
-<walkthrough-inline-feedback></walkthrough-inline-feedback>
+  <walkthrough-inline-feedback></walkthrough-inline-feedback>
