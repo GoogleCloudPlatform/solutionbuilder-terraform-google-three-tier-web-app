@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2021 Google LLC
+# Copyright 2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 set -o pipefail
 
 handle_error() {
@@ -20,33 +21,32 @@ handle_error() {
 }
 trap 'handle_error' ERR
 
-echo "Fetching Project ID"
-PROJECT_ID=$(gcloud config get project)
+while getopts p:r:t: flag
+do
+    case "${flag}" in
+        p) PROJECT_ID=${OPTARG};;
+        r) REGION=${OPTARG};;
+        t) IMAGE_TAG=${OPTARG};;
+    esac
+done
+
 echo "Project ID is ${PROJECT_ID}"
+echo "Region is ${REGION}"
+echo "IMAGE_TAG is ${IMAGE_TAG}"
 
-echo -n "Provide the region (e.g. us-central1) where the top level deployment resources were created for the deployment: "
-read REGION
-
-echo "Fetching deployment name"
-DEPLOYMENT_NAME=$(gcloud infra-manager deployments list --location ${REGION} --filter="labels.goog-solutions-console-deployment-name:* AND labels.goog-solutions-console-solution-id:three-tier-web-app" | sed -n 's/NAME: \(.*\)/\1/p')
+DEPLOYMENT_NAME=$(gcloud infra-manager deployments list --location ${REGION} --filter="labels.goog-solutions-console-deployment-name:* AND labels.goog-solutions-console-solution-id:three-tier-web-app" --format='value(name)')
 echo "Deployment name is ${DEPLOYMENT_NAME}"
 
-SERVICE_ACCOUNT=$(gcloud infra-manager deployments describe ${DEPLOYMENT_NAME} --location ${REGION} | sed -n 's/serviceAccount:.*\/\(.*\)@.*/\1/p')
-
-echo -n "The deployment currently uses ${SERVICE_ACCOUNT} service account. If you want to use any other service account, please specify the name. Else, press enter to use the current service account: "
-read NEW_SERVICE_ACCOUNT
-
-if [ -n "$NEW_SERVICE_ACCOUNT" ]; then
-    SERVICE_ACCOUNT=${NEW_SERVICE_ACCOUNT}
-fi
+SERVICE_ACCOUNT=$(gcloud infra-manager deployments describe ${DEPLOYMENT_NAME} --location ${REGION} --format='value(serviceAccount)')
 
 echo "Assigning required roles to the service account ${SERVICE_ACCOUNT}"
 # Iterate over the roles and check if the service account already has that role
 # assigned. If it has then skip adding that policy binding as using
 # --condition=None can overwrite any existing conditions in the binding.
 CURRENT_POLICY=$(gcloud projects get-iam-policy ${PROJECT_ID} --format=json)
-MEMBER="serviceAccount:${SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com"
-
+MEMBER_EMAIL=$(echo ${SERVICE_ACCOUNT} | awk -F '/' '{print $NF}')
+MEMBER="serviceAccount:${MEMBER_EMAIL}"
+apt-get install jq -y
 while IFS= read -r role || [[ -n "$role" ]]
 do \
 if echo "$CURRENT_POLICY" | jq -e --arg role "$role" --arg member "$MEMBER" '.bindings[] | select(.role == $role) | .members[] | select(. == $member)' > /dev/null; then \
@@ -59,21 +59,12 @@ else \
 fi
 done < "roles.txt"
 
-echo -n "To build the container images of the application, provide the image tag (e.g. 1.0.0): "
-read IMAGE_TAG
-
 cd ./src/middleware
 gcloud builds submit --config=./cloudbuild.yaml --substitutions=_IMAGE_TAG="${IMAGE_TAG}"
 cd -
 cd ./src/frontend
 gcloud builds submit --config=./cloudbuild.yaml --substitutions=_IMAGE_TAG="${IMAGE_TAG}"
 cd -
-
-echo "Replace the following values in ./main.tf file"
-echo -e "locals {\n  api_image = \"gcr.io/${PROJECT_ID}/three-tier-app-be:${IMAGE_TAG}\"\n  fe_image  = \"gcr.io/${PROJECT_ID}/three-tier-app-fe:${IMAGE_TAG}\"\n}"
-
-
-read -p "Once done, press Enter to continue: "
 
 DEPLOYMENT_DESCRIPTION=$(gcloud infra-manager deployments describe ${DEPLOYMENT_NAME} --location ${REGION} --format json)
 cat <<EOF > input.tfvars
@@ -83,15 +74,12 @@ zone="$(echo $DEPLOYMENT_DESCRIPTION | jq -r '.terraformBlueprint.inputValues.zo
 project_id = "${PROJECT_ID}"
 deployment_name = "${DEPLOYMENT_NAME}"
 api_image="gcr.io/${PROJECT_ID}/three-tier-app-be:${IMAGE_TAG}"
-fe_image="gcr.io/${PROJECT_ID}/three-tier-app-fe:${IMAGE_TAG}"
+fe_image_name="gcr.io/${PROJECT_ID}/three-tier-app-fe:${IMAGE_TAG}"
 labels = {
   "goog-solutions-console-deployment-name" = "${DEPLOYMENT_NAME}",
   "goog-solutions-console-solution-id" = "three-tier-web-app"
 }
 EOF
-
-echo "An input.tfvars has been created in the current directory with a set of default input terraform variables for the solution. You can modify their values or go ahead with the defaults."
-read -p "Once done, press Enter to continue: "
 
 echo "Creating the cloud storage bucket if it does not exist already"
 BUCKET_NAME="${PROJECT_ID}_infra_manager_staging"
@@ -103,4 +91,4 @@ else
 fi
 
 echo "Deploying the solution"
-gcloud infra-manager deployments apply projects/${PROJECT_ID}/locations/${REGION}/deployments/${DEPLOYMENT_NAME} --service-account projects/${PROJECT_ID}/serviceAccounts/${SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com --local-source="."     --inputs-file=./input.tfvars --labels="modification-reason=make-it-mine,goog-solutions-console-deployment-name=${DEPLOYMENT_NAME},goog-solutions-console-solution-id=three-tier-web-app,goog-config-partner=sc"
+gcloud infra-manager deployments apply projects/${PROJECT_ID}/locations/${REGION}/deployments/${DEPLOYMENT_NAME} --service-account ${SERVICE_ACCOUNT} --local-source="."     --inputs-file=./input.tfvars --labels="modification-reason=make-it-mine,goog-solutions-console-deployment-name=${DEPLOYMENT_NAME},goog-solutions-console-solution-id=three-tier-web-app,goog-config-partner=sc"
