@@ -55,3 +55,13 @@ variable "run_roles_list" {
     "roles/cloudsql.client",
   ]
 }
+
+variable "api_image" {
+  type        = string
+  description = "API image name. ."
+}
+
+variable "fe_image" {
+  type        = string
+  description = "FE image name. ."
+}
