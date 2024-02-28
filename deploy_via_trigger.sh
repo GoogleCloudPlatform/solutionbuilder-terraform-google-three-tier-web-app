@@ -21,21 +21,36 @@ handle_error() {
 }
 trap 'handle_error' ERR
 
-while getopts p:r:t: flag
+while getopts p:t: flag
 do
     case "${flag}" in
         p) PROJECT_ID=${OPTARG};;
-        r) REGION=${OPTARG};;
         t) IMAGE_TAG=${OPTARG};;
     esac
 done
 
+# Iterate over the infra manager location to identify the deployment
+# currently one deployment per project is only supported
+# in future if multiple deployments are supported per project this will need to change
+IM_SUPPORTED_REGIONS=("us-central1" "europe-west1" "asia-east1")
+
+for REGION in "${IM_SUPPORTED_REGIONS[@]}"; do
+    DEPLOYMENT_NAME=$(gcloud infra-manager deployments list --location "${REGION}" \
+                        --filter="labels.goog-solutions-console-deployment-name:* AND \
+                        labels.goog-solutions-console-solution-id:three-tier-web-app" \
+                        --format='value(name)' )
+    if [ -n "$DEPLOYMENT_NAME" ]; then
+        break
+    fi
+done
+if [ -z "$DEPLOYMENT_NAME" ]; then
+	echo "Failed to find the existing deployment, exiting now!"
+	exit 1
+fi
 echo "Project ID is ${PROJECT_ID}"
 echo "Region is ${REGION}"
-echo "IMAGE_TAG is ${IMAGE_TAG}"
-
-DEPLOYMENT_NAME=$(gcloud infra-manager deployments list --location ${REGION} --filter="labels.goog-solutions-console-deployment-name:* AND labels.goog-solutions-console-solution-id:three-tier-web-app" --format='value(name)')
 echo "Deployment name is ${DEPLOYMENT_NAME}"
+echo "IMAGE_TAG is ${IMAGE_TAG}"
 
 SERVICE_ACCOUNT=$(gcloud infra-manager deployments describe ${DEPLOYMENT_NAME} --location ${REGION} --format='value(serviceAccount)')
 
