@@ -143,14 +143,6 @@ gcloud builds submit --config=./cloudbuild.yaml --substitutions=_IMAGE_TAG="<var
 cd -
 ```
 
-Modify the `api_image` and `fe_image` value in <walkthrough-editor-select-line filePath="./main.tf" startLine="20" endLine="24" startCharacterOffset="0" endCharacterOffset="0">main.tf</walkthrough-editor-select-line> with the updated image tags.
-```
-locals {
-  api_image = "gcr.io/<var>PROJECT_ID</var>/three-tier-app-be:<var>IMAGE_TAG</var>"
-  fe_image  = "gcr.io/<var>PROJECT_ID</var>/three-tier-app-fe:<var>IMAGE_TAG</var>"
-}
-```
-
 ---
 **Create a terraform input file**
 
@@ -173,6 +165,8 @@ region="<var>TF_REGION</var>"
 zone="<var>TF_ZONE</var>"
 project_id = "<var>PROJECT_ID</var>"
 deployment_name = "<var>DEPLOYMENT_NAME</var>"
+api_image = "gcr.io/<var>PROJECT_ID</var>/three-tier-app-be:<var>IMAGE_TAG</var>"
+fe_image  = "gcr.io/<var>PROJECT_ID</var>/three-tier-app-fe:<var>IMAGE_TAG</var>"
 labels = {
   "goog-solutions-console-deployment-name" = "<var>DEPLOYMENT_NAME</var>",
   "goog-solutions-console-solution-id" = "three-tier-web-app"
