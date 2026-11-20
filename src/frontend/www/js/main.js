@@ -84,7 +84,7 @@ function renderNewTodo(){
     editor.id = `todo-new`;
     editor.addEventListener("blur", createHandler);
     editor.addEventListener("keypress", catchEnter);
-    editor.addEventListener("click", function(e){e.target.focus();e.target.innerHTML = "   "});
+    editor.addEventListener("click", function(e){e.target.focus();e.target.textContent = "   "});
 
 
     let h1 = document.createElement("h1");
@@ -115,13 +115,15 @@ function renderTodo(todo){
     let editor = document.createElement("span");
     editor.classList.add("editor");
     editor.contentEditable = true;
-    editor.innerHTML = todo.title;
+    // Use textContent so user-supplied titles are rendered as plain text and
+    // never parsed as HTML.
+    editor.textContent = todo.title;
     editor.id = `todo-${todo.id}`;
     editor.addEventListener("blur", blurHandler);
 
     let icon = document.createElement("span");
     icon.classList.add("material-icons", "delete");
-    icon.innerHTML = "delete";
+    icon.textContent = "delete";
     icon.id = `todo-${todo.id}-delete`;
     icon.addEventListener("click", deleteHandler);
 
@@ -139,16 +141,16 @@ function renderTodo(todo){
 
 function blurHandler(e){
     let complete = e.target.parentElement.childNodes[0].checked;
-    let title = e.target.innerHTML;
+    let title = e.target.textContent;
     let id = e.target.id.split("-")[1];
     updateTodo(id, title, complete);
 }
 
 function createHandler(e){
-    let title = e.target.innerHTML;
+    let title = e.target.textContent;
 
     if (title.trim().length == 0){
-        e.target.innerHTML= "";
+        e.target.textContent = "";
         return
     }
 
@@ -165,7 +167,7 @@ function catchEnter(e){
 
 function checkHandler(e){
     let complete = e.target.checked;
-    let title = e.target.parentElement.childNodes[1].innerHTML;
+    let title = e.target.parentElement.childNodes[1].textContent;
     let id = e.target.parentElement.childNodes[1].id.split("-")[1];
 
 
